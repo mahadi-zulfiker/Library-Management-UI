@@ -1,4 +1,3 @@
-// src/pages/Books.tsx
 import React, { useState } from 'react';
 import { useGetBooksQuery, useDeleteBookMutation } from '../api/bookApi';
 import type { IBook } from '../types';
@@ -22,22 +21,16 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"; // Import Select components
-
-// Ensure you have the Select component from Shadcn UI. If not, run:
-// npx shadcn-ui@latest add select
+} from "@/components/ui/select";
 
 const Books: React.FC = () => {
-  // --- Pagination State ---
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(10); // Default items per page
+  const [itemsPerPage, setItemsPerPage] = useState(10);
 
-  // Pass pagination parameters to the query
   const { data, isLoading, isError, error } = useGetBooksQuery({
     page: currentPage,
     limit: itemsPerPage,
   });
-  // --- End Pagination State ---
 
   const [deleteBook] = useDeleteBookMutation();
   const [showConfirm, setShowConfirm] = useState(false);
@@ -85,7 +78,6 @@ const Books: React.FC = () => {
   }
 
   const books: IBook[] = data?.data || [];
-  // Access pagination data from the response
   const totalPages = data?.pagination?.totalPages || 1;
   const totalItems = data?.pagination?.total || 0;
 
@@ -95,7 +87,7 @@ const Books: React.FC = () => {
 
   const handleItemsPerPageChange = (value: string) => {
     setItemsPerPage(Number(value));
-    setCurrentPage(1); // Reset to first page when items per page changes
+    setCurrentPage(1);
   };
 
   return (
@@ -110,7 +102,7 @@ const Books: React.FC = () => {
         </Button>
       </div>
 
-      {books.length === 0 && !isLoading ? ( // Check isLoading to avoid "No books found" during initial fetch
+      {books.length === 0 && !isLoading ? (
         <p className="text-center text-gray-600">No books found. Add a new book to get started!</p>
       ) : (
         <>
@@ -130,7 +122,6 @@ const Books: React.FC = () => {
               <TableBody>
                 {books.map((book) => (
                   <TableRow key={book._id}>
-                    {/* Make title clickable to view details */}
                     <TableCell className="font-medium">
                       <Link to={`/books/${book._id}`} className="hover:underline text-blue-600">
                         {book.title}
@@ -187,8 +178,7 @@ const Books: React.FC = () => {
             </Table>
           </div>
 
-          {/* Pagination Controls */}
-          {totalItems > 0 && ( // Only show pagination if there are items
+          {totalItems > 0 && (
             <div className="flex flex-col sm:flex-row justify-between items-center mt-6 space-y-4 sm:space-y-0">
               <div className="flex items-center space-x-2">
                 <span className="text-sm text-gray-700">Rows per page:</span>

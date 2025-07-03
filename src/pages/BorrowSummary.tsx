@@ -1,5 +1,5 @@
 import React from 'react';
-import { useGetBorrowedBooksSummaryQuery } from '../api/borrowApi';
+import { useGetBorrowedBooksSummaryQuery } from '../api/bookApi';
 import type { IBorrowSummaryItem } from '../types';
 import {
   Table,
@@ -16,13 +16,12 @@ const BorrowSummary: React.FC = () => {
   if (isLoading) return <div className="text-center py-8 text-gray-700">Loading borrow summary...</div>;
   if (isError) {
     let errorMessage = 'Something went wrong';
-    if (error && typeof error === 'object') {
-      type ErrorDataWithMessage = { message?: string };
-      if ('status' in error && 'data' in error && typeof error.data === 'object' && error.data !== null && 'message' in error.data) {
-        const errorData = error.data as ErrorDataWithMessage;
-        errorMessage = errorData.message || errorMessage;
-      } else if ('message' in error) {
-        errorMessage = error.message || errorMessage;
+    if (error) {
+      if ('message' in error && typeof error.message === 'string') {
+        errorMessage = error.message;
+      } else if ('data' in error && typeof error.data === 'object' && error.data !== null && 'message' in error.data) {
+        // @ts-expect-error: error.data may not have a typed 'message' property
+        errorMessage = error.data.message || errorMessage;
       }
     }
     return <div className="text-center py-8 text-red-600">Error: {errorMessage}</div>;
@@ -47,8 +46,8 @@ const BorrowSummary: React.FC = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {summary.map((item, index) => (
-                <TableRow key={index}>
+              {summary.map((item) => (
+                <TableRow key={item.book._id}>
                   <TableCell className="font-medium">{item.book.title}</TableCell>
                   <TableCell>{item.book.isbn}</TableCell>
                   <TableCell className="text-center">{item.totalQuantity}</TableCell>

@@ -1,4 +1,3 @@
-// src/pages/BookDetails.tsx
 import React from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useGetBookByIdQuery } from '../api/bookApi';

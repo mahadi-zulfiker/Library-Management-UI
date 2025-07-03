@@ -1,4 +1,3 @@
-// src/App.tsx
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
@@ -8,7 +7,7 @@ import CreateBook from './pages/CreateBook';
 import EditBook from './pages/EditBook';
 import BorrowBook from './pages/BorrowBook';
 import BorrowSummary from './pages/BorrowSummary';
-import BookDetails from './pages/BookDetails'; // Import the new component
+import BookDetails from './pages/BookDetails';
 import NotFound from './pages/NotFound';
 
 const App: React.FC = () => {

@@ -41,12 +41,12 @@ export interface IBorrow {
 
 export interface IBorrowSummaryItem {
   book: {
+    _id: string;
     title: string;
     isbn: string;
   };
   totalQuantity: number;
 }
-
 export interface ApiResponse<T> {
   success: boolean;
   message: string;

@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import type { SubmitHandler } from 'react-hook-form';
-import type { IBorrow } from '../types';
-import { useCreateBorrowMutation } from '../api/borrowApi';
+import { useCreateBorrowMutation } from '../api/bookApi';
 import { useGetBookByIdQuery } from '../api/bookApi';
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
@@ -23,12 +22,11 @@ interface BorrowFormInputs {
 const BorrowBook: React.FC = () => {
   const { bookId } = useParams<{ bookId: string }>();
   const { data: bookData, isLoading: isBookLoading, isError: isBookError } = useGetBookByIdQuery(bookId!);
-  const [createBorrow, { isLoading: isBorrowing }] = useCreateBorrowMutation();
+  const [createBorrow, { isLoading: isBorrowing }] = useCreateBorrowMutation(); // Use the correct mutation
   const navigate = useNavigate();
 
   const { register, handleSubmit, setValue, formState: { errors }, watch } = useForm<BorrowFormInputs>();
   const quantityWatch = watch('quantity');
-  const dueDateWatch = watch('dueDate');
 
   const [date, setDate] = useState<Date>();
 
@@ -46,9 +44,18 @@ const BorrowBook: React.FC = () => {
       toast.error('Requested quantity exceeds available copies.');
       return;
     }
+    if (data.quantity <= 0) {
+        toast.error('Quantity must be at least 1.');
+        return;
+    }
+    if (!date) {
+        toast.error('Please select a due date.');
+        return;
+    }
+
 
     try {
-      const borrowData: IBorrow = {
+      const borrowData = {
         book: bookId,
         quantity: data.quantity,
         dueDate: data.dueDate,
@@ -57,15 +64,19 @@ const BorrowBook: React.FC = () => {
       toast.success('Book borrowed successfully!');
       navigate('/borrow-summary');
     } catch (err: unknown) {
-      interface ErrorWithMessage {
+      interface ApiError {
         data?: { message?: string };
         message?: string;
       }
-      const errorObj = err as ErrorWithMessage;
-      const errorMessage =
-        typeof err === 'object' && err !== null
-          ? errorObj?.data?.message || errorObj?.message || 'Unknown error'
-          : 'Unknown error';
+      let errorMessage = 'Unknown error';
+      if (typeof err === 'object' && err !== null) {
+        const apiErr = err as ApiError;
+        if ('data' in apiErr && typeof apiErr.data?.message === 'string') {
+          errorMessage = apiErr.data!.message!;
+        } else if ('message' in apiErr && typeof apiErr.message === 'string') {
+          errorMessage = apiErr.message;
+        }
+      }
       toast.error(`Failed to borrow book: ${errorMessage}`);
       console.error('Failed to borrow book:', err);
     }
@@ -122,9 +133,8 @@ const BorrowBook: React.FC = () => {
                 />
               </PopoverContent>
             </Popover>
-            <Input
+            <input
               type="hidden"
-              id="dueDate"
               {...register('dueDate', { required: 'Due Date is required' })}
             />
             {errors.dueDate && <p className="text-red-500 text-sm">{errors.dueDate.message}</p>}
@@ -136,7 +146,7 @@ const BorrowBook: React.FC = () => {
             </Button>
             <Button
               type="submit"
-              disabled={isBorrowing || quantityWatch > book.copies || quantityWatch < 1 || !dueDateWatch}
+              disabled={isBorrowing || !date || quantityWatch > book.copies || quantityWatch < 1}
             >
               {isBorrowing ? 'Borrowing...' : 'Borrow Book'}
             </Button>
