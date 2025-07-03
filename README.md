@@ -2,8 +2,10 @@
 
 This is the frontend client for a minimal library management system, built with React, Redux Toolkit Query (RTK Query), TypeScript, and styled with Tailwind CSS and Shadcn UI. It provides a clean and functional interface for managing books and tracking borrowing activities.
 
-This project is part of a full-stack application. The backend API source can be found [here](https://github.com/mahadi-zulfiker/Library-Management-API). The live backend API is deployed at [https://library-management-drab-xi.vercel.app/](https://library-management-drab-xi.vercel.app/).
-Frontend LINK: https://library-frontend-lac.vercel.app
+This project is part of a full-stack application. The backend API source can be found [here](https://github.com/mahadi-zulfiker/Library-Management-API). The live backend API is deployed at [https://library-management-drab-xi.vercel.app/](https://library-management-drab-xi.vercel.app/). 
+Frontend LINK: https://library-frontend-lac.vercel.app  
+
+Backend Github LINK: https://github.com/mahadi-zulfiker/Library-Management-API
 
 ## ✨ Features
 
